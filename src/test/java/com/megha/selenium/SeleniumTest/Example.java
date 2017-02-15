@@ -3,8 +3,8 @@ package com.megha.selenium.SeleniumTest;
 import org.apache.commons.io.FileUtils;
 
 import org.junit.Ignore;
-import org.testng.annotations.Test;
-//import org.junit.Test;
+//import org.testng.annotations.Test;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -41,14 +42,15 @@ import org.openqa.selenium.interactions.Actions;
 public class Example {
 	
 	@Ignore
-	@Test()
+	@Test
 	public void test() throws InterruptedException,IOException {
 		
 		//System.setProperty("webdriver.gecko.driver", "/Users/megharastogi/Downloads/geckodriver");
 		//WebDriver driver = new FirefoxDriver();
 		
-		System.setProperty("webdriver.chrome.driver", "/Users/megharastogi/Downloads/chromedriver");
-		WebDriver driver = new ChromeDriver();
+		//System.setProperty("webdriver.chrome.driver", "/Users/megharastogi/Downloads/chromedriver");
+		//WebDriver driver = new ChromeDriver();
+		WebDriver driver = new SafariDriver();
 
 		//driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
 		driver.get("https://letskodeit.teachable.com/pages/practice");
@@ -76,6 +78,7 @@ public class Example {
 
 		Thread.sleep(3000);
 		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		
 		Thread.sleep(3000);
 		
@@ -264,5 +267,57 @@ public class Example {
 
 		driver.quit();
 	}
-	
+    @Test
+	public void test3() throws InterruptedException
+	{
+		System.setProperty("webdriver.chrome.driver", "/Users/megharastogi/Downloads/chromedriver");
+		WebDriver driver = new ChromeDriver();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		driver.manage().window().setSize(new Dimension(1280,794));
+		driver.get("https://www.paypal.com/");
+		WebElement ebay = null;
+		String ebayText = null;
+		WebElement paypal = driver.findElement(By.id("ul-btn"));
+		String paypalText = paypal.getText();
+		String paypalWindow = driver.getWindowHandle();
+		
+		Thread.sleep(3000);
+		
+		if (driver instanceof JavascriptExecutor)
+		{
+			JavascriptExecutor js = (JavascriptExecutor)driver;
+			js.executeScript("window.open('http://www.ebay.com/');");
+			//driver.get("http://www.ebay.com/");
+			Set<String> handles = driver.getWindowHandles();
+			for (String a : handles)
+			{
+				if(a.equals(paypalWindow))
+				continue;
+				else{
+					
+					driver.switchTo().window(a);
+					ebay = driver.findElement(By.id("gh-btn"));
+					ebayText = ebay.getAttribute("value");
+					Thread.sleep(3000);
+					break;
+				}
+					
+			}
+			
+			
+		}
+		else{
+			 throw new IllegalStateException("This driver does not support JavaScript!");
+		}
+		
+		driver.close();
+		Thread.sleep(3000);
+
+
+		Thread.sleep(3000);
+		System.out.println("Text at paypal is --->>" + paypalText);
+		System.out.println("Text at ebay is --->>" + ebayText);
+
+		driver.quit();
+	}
 }
